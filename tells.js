@@ -24,11 +24,10 @@ try {
  * Purge expired messages from those stored
  * @param threshold	The age limit of an "old" tell, in ms
  */
-exports.pruneOld = pruneOld = function(threshold) {
+var pruneOld = exports.pruneOld = function (threshold) {
 	var now = Date.now();
 	for (var i in Tells.inbox) {
 		for (var n = 0; n < Tells.inbox[i].length; n++) {
-			console.log(i + ', ' + String(n) + ': ' + String((now - Tells.inbox[i][n].time) >= threshold));
 			if ((now - Tells.inbox[i][n].time) >= threshold) {
 				for (var ip in Tells.inbox[i][n].ips) {
 					if (Tells.outbox[ip]) Tells.outbox[ip]--;
@@ -49,26 +48,26 @@ exports.outbox = tells.outbox || {};
 /**
  * Write the inbox and outbox to file
  */
-exports.writeTells = (function() {
+exports.writeTells = (function () {
 	var writing = false;
 	var writePending = false; // whether or not a new write is pending
-	var finishWriting = function() {
+	var finishWriting = function () {
 		writing = false;
 		if (writePending) {
 			writePending = false;
 			Tells.writeTells();
 		}
 	};
-	return function() {
+	return function () {
 		if (writing) {
 			writePending = true;
 			return;
 		}
 		writing = true;
 		var data = JSON.stringify({inbox: Tells.inbox, outbox: Tells.outbox});
-		fs.writeFile('config/tells.json.0', data, function() {
+		fs.writeFile('config/tells.json.0', data, function () {
 			// rename is atomic on POSIX, but will throw an error on Windows
-			fs.rename('config/tells.json.0', 'config/tells.json', function(err) {
+			fs.rename('config/tells.json.0', 'config/tells.json', function (err) {
 				if (err) {
 					// This should only happen on Windows.
 					fs.writeFile('config/tells.json', data, finishWriting);
@@ -85,7 +84,7 @@ exports.writeTells = (function() {
  * @param userid	The userid whose tells to send
  * @param user		The User object to send the tells to
  */
-exports.sendTell = function(userid, user) {
+exports.sendTell = function (userid, user) {
 	var buffer = '|tells';
 	var tellsToSend = Tells.inbox[userid];
 	for (var i = 0; i < tellsToSend.length; i++) {
@@ -110,7 +109,7 @@ exports.sendTell = function(userid, user) {
  *			null if the sender has a full outbox
  *			otherwise true
  */
-exports.addTell = function(sender, receiver, msg) {
+exports.addTell = function (sender, receiver, msg) {
 	if (Tells.inbox[receiver] && Tells.inbox[receiver].length >= 5) return false;
 	for (var ip in sender.ips) {
 		if (!Tells.outbox[ip]) {
@@ -131,29 +130,30 @@ exports.addTell = function(sender, receiver, msg) {
 	Tells.writeTells();
 	return true;
 };
+
 /**
  * Converts a UNIX timestamp into 'x minutes, y seconds ago' form
  * @param time	UNIX timestamp (e.g., 1405460769855)
  * @return 	A human readable time difference between now and the given time
  */
-exports.getTellTime = function(time) {
+exports.getTellTime = function (time) {
 	time = Date.now() - time;
-	time = Math.round(time/1000); // rounds to nearest second
-	var seconds = time%60;
+	time = Math.round(time / 1000); // rounds to nearest second
+	var seconds = time % 60;
 	var times = [];
 	if (seconds) times.push(String(seconds) + (seconds === 1 ? ' second' : ' seconds'));
 	var minutes, hours, days;
 	if (time >= 60) {
-		time = (time - seconds)/60; // converts to minutes
-		minutes = time%60;
-		if (minutes) times = [String(minutes) + (minutes === 1 ? ' minute' : ' minutes')].concat(times);
+		time = (time - seconds) / 60; // converts to minutes
+		minutes = time % 60;
+		if (minutes) times.unshift(String(minutes) + (minutes === 1 ? ' minute' : ' minutes'));
 		if (time >= 60) {
-			time = (time - minutes)/60; // converts to hours
-			hours = time%24;
-			if (hours) times = [String(hours) + (hours === 1 ? ' hour' : ' hours')].concat(times);
+			time = (time - minutes) / 60; // converts to hours
+			hours = time % 24;
+			if (hours) times.unshift(String(hours) + (hours === 1 ? ' hour' : ' hours'));
 			if (time >= 24) {
-				days = (time - hours)/24; // you can probably guess this one
-				if (days) times = [String(days) + (days === 1 ? ' day' : ' days')].concat(times);
+				days = (time - hours) / 24; // you can probably guess this one
+				if (days) times.unshift(String(days) + (days === 1 ? ' day' : ' days'));
 			}
 		}
 	}
@@ -162,5 +162,5 @@ exports.getTellTime = function(time) {
 };
 
 // clear old messages every two hours
-exports.pruneOldTimer = setInterval(pruneOld, 1000*60*60*2, Config.tellsexpiryage || 1000*60*60*24*7);
-
+exports.pruneOldTimer = setInterval(pruneOld, 1000 * 60 * 60 * 2,
+        Config.tellsexpiryage || 1000 * 60 * 60 * 24 * 7);
