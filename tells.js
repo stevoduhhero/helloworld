@@ -85,7 +85,7 @@ exports.writeTells = (function () {
  * @param user		The User object to send the tells to
  */
 exports.sendTell = function (userid, user) {
-	var buffer = '|tells';
+	var buffer = '|c|';
 	var tellsToSend = Tells.inbox[userid];
 	for (var i = 0; i < tellsToSend.length; i++) {
 		for (var ip in tellsToSend[i].ips) {
