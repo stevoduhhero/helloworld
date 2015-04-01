@@ -472,7 +472,7 @@ var parse = exports.parse = function (message, room, user, connection, levelsDee
         return false;
     }
 
-	gamesConfig.processChatData(user, room, connection, message);
+	Bot.processChatData(user, room, connection, message);
 	
     //dem feels
     function clean(string) {
