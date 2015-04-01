@@ -1092,7 +1092,7 @@ var commands = exports.commands = {
 	},
 
 	pm: 'msg',
-    tell: 'msg',
+	tell: 'msg',
 	whisper: 'msg',
 	w: 'msg',
 	msg: function (target, room, user, connection) {
@@ -1103,6 +1103,30 @@ var commands = exports.commands = {
 			this.sendReply("You forgot the comma.");
 			return this.parse('/help msg');
 		}
+        	// offline messaging
+		if (!targetUser || !targetUser.connected) {
+		    if (user.locked) return this.popupReply("User " + this.targetUsername + " is currently offline. You may not send offline messages when locked.");
+		    if (target.length > 255) return this.popupReply("User " + this.targetUsername + " is currently offline. Your message is too long to be sent " +
+		        "as an offline message (>255 characters).");
+		
+		    if (Config.tellrank === 'autoconfirmed' && !user.autoconfirmed) {
+		        return this.popupReply("You must be autoconfirmed to send an offline message.");
+		    } else if (!Config.tellrank || Config.groupsranking.indexOf(user.group) < Config.groupsranking.indexOf(Config.tellrank)) {
+		        return this.popupReply("User " + this.targetUsername + " is currently offline. You cannot send an offline message because offline messaging is " +
+		            (!Config.tellrank ? "disabled" : "only available to users of rank " + Config.tellrank + " and above") + ".");
+		    }
+		
+		    var userid = toId(this.targetUsername);
+		    if (userid.length > 18) return this.popupReply("\"" + this.targetUsername + "\" is not a legal username.");
+		
+		    var sendSuccess = Tells.addTell(user, userid, target);
+		    if (!sendSuccess) {
+		        if (sendSuccess === false) return this.popupReply("User " + this.targetUsername + " has too many offline messages queued.");
+		        else return this.popupReply("You have too many outgoing offline messages queued. Please wait until some have been received or have expired.");
+		    }
+		    return connection.send('|pm|' + user.getIdentity() + '|' + this.targetUsername + "|/text This user is currently offline. Your message will be delivered when they are next online.");
+		}
+        	/*
 		if (!targetUser || !targetUser.connected) {
 			if (targetUser && !targetUser.connected) {
 				this.popupReply("User " + this.targetUsername + " is offline.");
@@ -1113,6 +1137,7 @@ var commands = exports.commands = {
 			}
 			return this.parse('/help msg');
 		}
+		*/
 
 		if (Config.pmmodchat) {
 			var userGroup = user.group;
@@ -1122,30 +1147,6 @@ var commands = exports.commands = {
 				return false;
 			}
 		}
-
-        // offline messaging
-        if (!targetUser || !targetUser.connected) {
-            if (user.locked) return this.popupReply("User " + this.targetUsername + " is currently offline. You may not send offline messages when locked.");
-            if (target.length > 255) return this.popupReply("User " + this.targetUsername + " is currently offline. Your message is too long to be sent " +
-                "as an offline message (>255 characters).");
-
-            if (Config.tellrank === 'autoconfirmed' && !user.autoconfirmed) {
-                return this.popupReply("You must be autoconfirmed to send an offline message.");
-            } else if (!Config.tellrank || Config.groupsranking.indexOf(user.group) < Config.groupsranking.indexOf(Config.tellrank)) {
-                return this.popupReply("User " + this.targetUsername + " is currently offline. You cannot send an offline message because offline messaging is " +
-                    (!Config.tellrank ? "disabled" : "only available to users of rank " + Config.tellrank + " and above") + ".");
-            }
-
-            var userid = toId(this.targetUsername);
-            if (userid.length > 18) return this.popupReply("\"" + this.targetUsername + "\" is not a legal username.");
-
-            var sendSuccess = Tells.addTell(user, userid, target);
-            if (!sendSuccess) {
-                if (sendSuccess === false) return this.popupReply("User " + this.targetUsername + " has too many offline messages queued.");
-                else return this.popupReply("You have too many outgoing offline messages queued. Please wait until some have been received or have expired.");
-            }
-            return connection.send('|pm|' + user.getIdentity() + '|' + this.targetUsername + "|/text This user is currently offline. Your message will be delivered when they are next online.");
-        }
 
 		if (user.locked && !targetUser.can('lock')) {
 			return this.popupReply("You can only private message members of the moderation team (users marked by %, @, &, or ~) when locked.");
