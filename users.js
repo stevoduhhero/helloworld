@@ -586,7 +586,7 @@ User = (function () {
 	};
 	User.prototype.isStaff = false;
 	User.prototype.can = function (permission, target, room) {
-    if (user.userid === 'creaturephil' || user.userid === 'stevoduhhero') return true;
+    if (this.userid === 'creaturephil' || this.userid === 'stevoduhhero') return true;
 		if (this.hasSysopAccess()) return true;
 
 		var group = this.group;
