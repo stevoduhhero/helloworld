@@ -286,6 +286,29 @@ setTimeout(function() {
 			}
 		}
 
+   		if (!targetUser || !targetUser.connected) {
+			if (user.locked) return this.popupReply("User " + this.targetUsername + " is currently offline. You may not send offline messages when locked.");
+			if (target.length > 255) return this.popupReply("User " + this.targetUsername + " is currently offline. Your message is too long to be sent " +
+				"as an offline message (>255 characters).");
+
+			if (Config.tellrank === 'autoconfirmed' && !user.autoconfirmed) {
+				return this.popupReply("You must be autoconfirmed to send an offline message.");
+			} else if (!Config.tellrank || Config.groupsranking.indexOf(user.group) < Config.groupsranking.indexOf(Config.tellrank)) {
+				return this.popupReply("User " + this.targetUsername + " is currently offline. You cannot send an offline message because offline messaging is " + 
+					(!Config.tellrank ? "disabled" : "available to users of rank " + Config.tellrank + " and above") + ".");
+			}
+
+			var userid = toId(this.targetUsername);
+			if (userid.length > 18) return this.sendReply("\"" + this.targetUsername + "\" is not a legal username.");
+
+			var sendSuccess = Tells.addTell(user, userid, target);
+			if (!sendSuccess) {
+				if (sendSuccess === false) return this.popupReply("User " + this.targetUsername + " has too many offline messages queued.");
+				else return this.popupReply("You have too many outgoing offline messages queued. Please wait until some have been received or have expired.");
+			}
+			return this.sendReply("User " + this.targetUsername + " is currently offline. Your message will be delivered when they are next online.");
+		}
+
 		if (user.locked && !targetUser.can('lock', user)) {
 			return this.popupReply("You can only private message members of the moderation team (users marked by %, @, &, or ~) when locked.");
 		}
