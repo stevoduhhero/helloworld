@@ -1012,7 +1012,7 @@ var commands = exports.commands = {
 		        if (sendSuccess === false) return this.popupReply("User " + this.targetUsername + " has too many offline messages queued.");
 		        else return this.popupReply("You have too many outgoing offline messages queued. Please wait until some have been received or have expired.");
 		    }
-		    return connection.send('|pm|' + user.getIdentity() + '|' + this.targetUsername + "|/text This user is currently offline. Your message will be delivered when they are next online.");
+		    return connection.send('|pm|' + user.getIdentity() + '|' + ' ' + this.targetUsername + "|/text This user is currently offline. Your message will be delivered when they are next online.");
 		}
         	/*
 		if (!targetUser || !targetUser.connected) {
