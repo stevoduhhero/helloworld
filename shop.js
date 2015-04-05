@@ -1,4 +1,4 @@
-﻿var shop = {
+var shop = {
 	host: "45.56.82.40",
 	port: 8000,
 	currency: "Goats",
@@ -15,26 +15,26 @@
 	items: {
 		"symbol": {
 			name: "Custom Symbol",
-			cost: 25,
-			daily: 2.5,
+			cost: 2500,
+			daily: 25,
 			desc: "Get a symbol by your name (Cannot be a symbol of authority)"
 		},
 		"avatar": {
 			name: "Custom Avatar",
-			cost: 100,
-			daily: 10,
+			cost: 10000,
+			daily: 100,
 			desc: "Get your own avatar (/buy avatar, url) (if animated 25 daily)"
 		},
 		"glow": {
 			name: "Name Glow",
-			cost: 50,
-			daily: 15,
+			cost: 50000,
+			daily: 150,
 			desc: "Adds a 'glow' effect to your name of your specified color. (/buy glow, color)"
 		},
 		"room": {
 			name: "Room",
-			cost: 300,
-			daily: 50,
+			cost: 300000,
+			daily: 500,
 			desc: "Get a room for yourself. Contact an admin once it's made. (NOT DONE)"
 		},
 	},
