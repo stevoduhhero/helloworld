@@ -2312,6 +2312,7 @@ var commands = exports.commands = {
 
 	lockdown: function (target, room, user) {
 		if (!this.can('lockdown')) return false;
+		this.parse('/update');
 
 		Rooms.global.lockdown = true;
 		for (var id in Rooms.rooms) {
