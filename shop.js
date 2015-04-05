@@ -15,26 +15,26 @@ var shop = {
 	items: {
 		"symbol": {
 			name: "Custom Symbol",
-			cost: 2500,
-			daily: 25,
+			cost: 25,
+			daily: 2.5,
 			desc: "Get a symbol by your name (Cannot be a symbol of authority)"
 		},
 		"avatar": {
 			name: "Custom Avatar",
-			cost: 10000,
-			daily: 100,
+			cost: 100,
+			daily: 10,
 			desc: "Get your own avatar (/buy avatar, url) (if animated 25 daily)"
 		},
 		"glow": {
 			name: "Name Glow",
-			cost: 50000,
-			daily: 150,
+			cost: 50,
+			daily: 15,
 			desc: "Adds a 'glow' effect to your name of your specified color. (/buy glow, color)"
 		},
 		"room": {
 			name: "Room",
-			cost: 300000,
-			daily: 500,
+			cost: 300,
+			daily: 50,
 			desc: "Get a room for yourself. Contact an admin once it's made. (NOT DONE)"
 		},
 	},
