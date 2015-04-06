@@ -31,12 +31,6 @@ var shop = {
 			daily: 15,
 			desc: "Adds a 'glow' effect to your name of your specified color. (/buy glow, color)"
 		},
-		"room": {
-			name: "Room",
-			cost: 300,
-			daily: 50,
-			desc: "Get a room for yourself. Contact an admin once it's made. (NOT DONE)"
-		},
 	},
 	userInit: function(name, connection) {
 		var oneDayMilliseconds = 1000 * 1 * 60 * 60 * 24;
